@@ -1,0 +1,14 @@
+aiofiles
+pyrofork
+tgcrypto
+python-dotenv
+fastapi[standard]
+requests
+jinja2
+motor
+pytz
+httpx
+PyJWT
+python-multipart
+passlib[bcrypt]
+bcrypt==3.2.0

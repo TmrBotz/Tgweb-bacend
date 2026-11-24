@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="https://cdn.jsdelivr.net/gh/weebzone/weebzone/data/Surf-TG/src/ico2.png" type="image/x-icon" />
+    <title>Stream</title>
+    <style>
+        html, body { margin: 0; height: 100%; background: #000; color: #ddd; font-family: sans-serif; }
+        body { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        video { width: 100%; max-height: 100vh; background: #000; }
+        #title { padding: 8px 12px; font-size: 14px; white-space: pre-line; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <video id="videoPlayer" controls playsinline></video>
+    <div id="title"></div>
+
+    <script>
+        // value is escaped by Jinja's tojson, safe to use inside <script>
+        const mediaId = {{ id|tojson }};
+
+        async function initPlayer() {
+            const videoElement = document.getElementById("videoPlayer");
+            const titleElement = document.getElementById("title");
+
+            try {
+                const response = await fetch(`/api/id/${encodeURIComponent(mediaId)}`);
+                if (!response.ok) {
+                    titleElement.textContent = "Video not found";
+                    return;
+                }
+                const data = await response.json();
+
+                videoElement.poster = data.thumbnail;   // /thumb/<id>, default image if none
+                videoElement.src = data.stream;         // /dl/<id>/<name>
+                titleElement.textContent = data.title;
+                document.title = (data.title || "Stream").split("\n")[0];
+            } catch (e) {
+                titleElement.textContent = "Failed to load video";
+            }
+        }
+
+        // Initialize the player on page load
+        initPlayer();
+    </script>
+
+</body>
+</html>
